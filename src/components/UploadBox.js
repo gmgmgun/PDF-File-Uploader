@@ -5,6 +5,13 @@ import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const UploadBox = ({
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  // onChangeUpload,
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   selectedFiles,
   setSelectedFiles,
   stagedFileList,
@@ -15,6 +22,13 @@ const UploadBox = ({
   setTotalProgress,
   totalSize,
   setTotalSize,
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  handleStagedFileList,
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
 }) => {
   /******* 1. props *******/
   /******* 2. state *******/
@@ -39,7 +53,16 @@ const UploadBox = ({
         tempFileList.push(file);
         formData.append("file", file);
         setTotalSize((prev) => prev + file.size);
+<<<<<<< HEAD
         setStagedFileList([...stagedFileList, ...tempFileList]);
+=======
+<<<<<<< HEAD
+        setStagedFileList([...stagedFileList, ...tempFileList]);
+=======
+        handleStagedFileList([...stagedFileList, ...tempFileList]);
+        // setStagedFileList([...stagedFileList, ...tempFileList]);
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
       } else {
         if (isPdf < 0) {
           cntNotPdf++;
@@ -61,18 +84,46 @@ const UploadBox = ({
     selectFiles(e.target.files);
   };
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  //드래그되는 요소가 드롭 가능한 영역으로 처음 진입할 때
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   const onDragEnter = useCallback(() =>
     fileUploadZoneRef.current?.classList.add("dragover")
   );
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  //드래그되는 요소가 드롭 가능한 영역 위로 이동할 때
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   const onDragOver = useCallback((e) => {
     e.preventDefault();
   });
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  //드래그되는 요소가 드롭 가능한 영역을 벗어날 때
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   const onDragLeave = useCallback(() =>
     fileUploadZoneRef.current?.classList.remove("dragover")
   );
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  //드래그되는 요소가 드롭 가능한 영역에서 드롭될 때
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   const onDrop = (e) => {
     fileUploadZoneRef.current?.classList.remove("dragover");
   };
@@ -164,7 +215,15 @@ const AttachmentsWrap = styled.div`
   width: 100%;
   max-width: 700px;
   min-width: 300px;
+<<<<<<< HEAD
   height: 250px;
+=======
+<<<<<<< HEAD
+  height: 250px;
+=======
+  height: 350px;
+>>>>>>> 2380bea (Initialize: 초기 세팅)
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   margin: 10px 0px;
   background: #ffffff;
   border: 1px dashed #006064;

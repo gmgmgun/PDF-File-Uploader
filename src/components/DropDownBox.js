@@ -5,7 +5,11 @@ import dropdown from "../assets/images/dropdown.png";
 function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
   const [isBtnOpen, setIsBtnOpen] = useState({});
   const [isInputOpen, setIsInputOpen] = useState({});
+<<<<<<< HEAD
   const [currentIndex, setCurrentIndex] = useState(-1);
+=======
+  // const [currentIndex, setCurrentIndex] = useState(-1);
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   const [userInput, setUserInput] = useState("");
   const [schoolList, setSchoolList] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState("");
@@ -15,9 +19,18 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
     2: BASIC_DATA[1].name,
     3: "",
   });
+<<<<<<< HEAD
 
   const yearRef = useRef(null);
   const schoolSearchNamesRef = useRef([]);
+=======
+  const [keyMutex, setKeyMutex] = useState(false);
+
+  const yearRef = useRef(null);
+  const schoolSearchNamesRef = useRef([]);
+  const currentIndexRef = useRef(0);
+  const schoolSearchBoxRef = useRef(null);
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
 
   const onClickSelected = useCallback(
     (e, idx) => {
@@ -34,7 +47,10 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
   };
 
   const handleSearch = (e) => {
+<<<<<<< HEAD
     console.log(e.target.value);
+=======
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
     setUserInput(e.target.value);
   };
 
@@ -42,6 +58,63 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
     if (userInput) return school.name.includes(userInput);
   });
 
+<<<<<<< HEAD
+=======
+  const handleKeyDown = (e) => {
+    // e.stopPropagation();
+    console.log(e);
+    if (!userInput) return;
+    if (!e) return;
+    // if (!currentIndex) return;
+    switch (e.key) {
+      case "ArrowUp":
+        // e.preventDefault();
+        const prevIndex =
+          currentIndexRef.current > 0
+            ? currentIndexRef.current - 1
+            : filteredSchoolList.length - 1;
+        setSelectedSchool(filteredSchoolList[prevIndex].name);
+        // setCurrentIndex(
+        //  prevIndex
+        // );
+        currentIndexRef.current = prevIndex;
+        return;
+      case "ArrowDown":
+        // e.preventDefault();
+        const nextIndex =
+          currentIndexRef.current < filteredSchoolList.length - 1
+            ? currentIndexRef.current + 1
+            : 0;
+        setSelectedSchool(filteredSchoolList[nextIndex].name);
+        // setCurrentIndex(nextIndex);
+        currentIndexRef.current = nextIndex;
+        console.log(currentIndexRef.current);
+        return;
+      case "Enter":
+        // e.preventDefault();
+        if (currentIndexRef.current > -1) {
+          setSelectedFilterList({
+            ...selectedFilterList,
+            3: filteredSchoolList[currentIndexRef.current].name,
+          });
+          setUserInput(filteredSchoolList[currentIndexRef.current].name);
+          setIsInputOpen(false);
+        }
+        return;
+      default:
+        break;
+    }
+
+    if (schoolSearchNamesRef.current[currentIndexRef.current]) {
+      console.log(schoolSearchNamesRef.current[currentIndexRef.current]);
+      schoolSearchNamesRef.current[currentIndexRef.current].scrollIntoView({
+        block: "start",
+        inline: "start",
+      });
+    }
+  };
+
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   useEffect(() => {
     fetch("/data/school_list.json")
       .then((res) => res.json())
@@ -72,7 +145,11 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
     }));
     setIsInputOpen(true);
   }, [userInput]);
+<<<<<<< HEAD
   console.log(currentIndex);
+=======
+
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
   useEffect(() => {
     const modifiedFileName = `${selectedFilterList[0]}_${selectedFilterList[1]}_${selectedFilterList[2]}_${selectedFilterList[3]}`;
     setModifiedFileNameList((prev) => ({
@@ -81,6 +158,7 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
     }));
   }, [selectedFilterList]);
 
+<<<<<<< HEAD
   const schoolSearchBoxRef = useRef(null);
 
   const handleKeyDown = useCallback(
@@ -135,6 +213,16 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
     },
     [currentIndex, userInput]
   );
+=======
+  useEffect(() => {
+    if (schoolSearchNamesRef.current[currentIndexRef.current]) {
+      schoolSearchNamesRef.current[currentIndexRef.current].scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
+  }, [currentIndexRef.current]);
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
 
   return (
     <DropDownWrap>
@@ -195,7 +283,13 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
                           value={selectedSchool}
                           key={schoolList.id}
                           onClick={onClickSchoolSelected}
+<<<<<<< HEAD
                           {...(idx === currentIndex ? {tabIndex: 0} : {})}
+=======
+                          {...(idx === currentIndexRef.current
+                            ? {tabIndex: 0}
+                            : {})}
+>>>>>>> 44b06cd (Initialize: 초기 세팅)
                         >
                           {schoolList.name}
                         </SchoolSearchName>
