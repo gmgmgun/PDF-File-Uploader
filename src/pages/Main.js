@@ -8,7 +8,6 @@ import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {API, SAMPLE_TOKEN} from "../config";
 import axios from "axios";
-import {v4} from "uuid";
 
 const Main = () => {
   const [contactInput, setContactInput] = useState("010", "");
@@ -17,16 +16,9 @@ const Main = () => {
   const [progressList, setProgressList] = useState([]);
   const [totalProgress, setTotalProgress] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
-  const [axiosCancelToken, setAxiosCancelToken] = useState();
-  const [deleteCode, setDeleteCode] = useState(0);
   const [modifiedFileNameList, setModifiedFileNameList] = useState({});
-  const cancelUpload = () => {
-    axiosCancelToken.cancel("Upload cancelled by user.");
-  };
-
-  const handleStagedFileList = (sth) => {
-    setStagedFileList(sth);
-  };
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [isAbort, setIsAbort] = useState(false);
 
   const sendFormData = async () => {
     let fileUploadedCount = 0;
@@ -36,12 +28,7 @@ const Main = () => {
       const formData = new FormData();
       formData.append("contact", contactInput);
       formData.append("date", moment().format("YYYY-MM-DD-ddd h:mm:ss a"));
-      const deleteCode = v4();
-      setDeleteCode(deleteCode);
-      const source = axios.CancelToken.source();
       formData.append("file", file, `${modifiedFileName}.pdf`);
-      formData.append("deleteCode", deleteCode);
-
       const axiosConfig = {
         url: `${API.postFileList}`,
         method: "POST",
@@ -50,10 +37,9 @@ const Main = () => {
           Authorization: SAMPLE_TOKEN,
         },
         data: formData,
-        maxContentLength: 10000000, // 엑시오스 용량 늘리기
-        maxBodyLength: 10000000, // 엑시오스 용량 늘리기
+        maxContentLength: 10000000,
+        maxBodyLength: 10000000,
         onUploadProgress: (progressEvent) => {
-          setAxiosCancelToken(source);
           setTotalProgress((prev) => prev + progressEvent.bytes);
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
@@ -64,17 +50,12 @@ const Main = () => {
             return newList;
           });
         },
-        cancelToken: source.token,
       };
       try {
         await axios(axiosConfig);
         fileUploadedCount++;
       } catch (error) {
-        if (axios.isCancel(error)) {
-          return;
-        } else {
-          console.log(error);
-        }
+        console.log(error);
       }
     }
     if (fileUploadedCount === stagedFileList.length) {
@@ -92,6 +73,7 @@ const Main = () => {
   };
 
   const onReset = () => {
+    setIsAbort(false);
     setSelectedFile([]) && setContactInput("010", "");
     toast.success("발송되었습니다.");
   };
@@ -117,13 +99,12 @@ const Main = () => {
   };
 
   return (
-    <Wrap>
+    <MainWrap>
       <ToastContainer
         position="top-center"
         limit={2}
         closeButton={false}
         autoClose={800}
-        hideProgressBar
       />
       <UploadBox
         selectedFile={selectedFile}
@@ -138,7 +119,6 @@ const Main = () => {
         setTotalSize={setTotalSize}
         initializeState={initializeState}
         handleProgressRef={handleProgressRef}
-        handleStagedFileList={handleStagedFileList}
       />
       {stagedFileList && (
         <StageBox
@@ -154,6 +134,7 @@ const Main = () => {
           setTotalSize={setTotalSize}
           initializeState={initializeState}
           setModifiedFileNameList={setModifiedFileNameList}
+          setIsAllSelected={setIsAllSelected}
         />
       )}
       <SubmitBox
@@ -164,13 +145,15 @@ const Main = () => {
         setProgressList={setProgressList}
         setTotalProgress={setTotalProgress}
         setTotalSize={setTotalSize}
-        cancelUpload={cancelUpload}
+        isAllSelected={isAllSelected}
+        isAbort={isAbort}
+        setIsAbort={setIsAbort}
       />
-    </Wrap>
+    </MainWrap>
   );
 };
 
-const Wrap = styled.div`
+const MainWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
