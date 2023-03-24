@@ -119,15 +119,9 @@ const FileWrap = styled.div`
   grid-template-columns: 1fr 5fr 1fr; /* 새로운 열 추가 */
   // grid-template-columns: 1fr 9fr;
   padding: 15px 0px;
-  font-weight: 750;
   border-bottom: 1px solid #dcdcdc;
   @media (max-width: 400px) {
     padding: 5px 0px;
-  }
-  opacity: 0.7;
-  &:hover {
-    cursor: pointer;
-    opacity: 1;
   }
 `;
 
@@ -145,7 +139,27 @@ const PngIcon = styled.img`
   }
 `;
 
-const UploadProgressBarWrap = styled.div``;
+const StagedFileInfoText = styled.div``;
+
+const StagedFileInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StagedFileName = styled.div`
+  font-size: 15px;
+  font-weight: 750;
+`;
+
+const StagedFileSize = styled.div`
+  padding-top: 2px;
+  font-size: 12px;
+  font-weight: 750;
+`;
+
+const UploadProgressBarWrap = styled.div`
+  padding-top: 5px;
+`;
 
 const UploadProgressBar = styled(ProgressBar).attrs((props) => ({
   min: 0,
@@ -160,21 +174,6 @@ const UploadProgressBar = styled(ProgressBar).attrs((props) => ({
     font-size: 17px;
     font-weight: 1000;
   }
-`;
-
-const StagedFileInfoText = styled.div``;
-
-const StagedFileName = styled.div`
-  font-size: 15px;
-`;
-
-const StagedFileSize = styled.div`
-  font-size: 13px;
-`;
-
-const StagedFileInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const DeleteStagedFileBtn = styled.button`

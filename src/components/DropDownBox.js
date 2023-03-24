@@ -17,7 +17,7 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
   });
 
   const yearRef = useRef(null);
-  const schoolSearchNamesRef = useRef(null);
+  const schoolSearchNamesRef = useRef([]);
 
   const onClickSelected = useCallback(
     (e, idx) => {
@@ -34,6 +34,7 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
   };
 
   const handleSearch = (e) => {
+    console.log(e.target.value);
     setUserInput(e.target.value);
   };
 
@@ -71,7 +72,7 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
     }));
     setIsInputOpen(true);
   }, [userInput]);
-
+  console.log(currentIndex);
   useEffect(() => {
     const modifiedFileName = `${selectedFilterList[0]}_${selectedFilterList[1]}_${selectedFilterList[2]}_${selectedFilterList[3]}`;
     setModifiedFileNameList((prev) => ({
@@ -84,11 +85,9 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
 
   const handleKeyDown = useCallback(
     (e) => {
+      e.stopPropagation();
       if (!userInput) return;
-      const index = filteredSchoolList.findIndex(
-        (school) => school.name === selectedSchool
-      );
-      // setCurrentIndex(index);
+      const index = currentIndex;
       console.log(e.key);
       switch (e.key) {
         case "ArrowUp":
@@ -96,14 +95,20 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
           const prevIndex =
             index > 0 ? index - 1 : filteredSchoolList.length - 1;
           setSelectedSchool(filteredSchoolList[prevIndex].name);
-          setCurrentIndex(prevIndex);
+          setCurrentIndex(
+            prevIndex === filteredSchoolList.length - 1 ? 0 : prevIndex
+          );
           break;
         case "ArrowDown":
           e.preventDefault();
           const nextIndex =
             index < filteredSchoolList.length - 1 ? index + 1 : 0;
+          console.log("next = ", nextIndex);
+          console.log("list = ", filteredSchoolList.length - 1);
+          console.log("index = ", index);
           setSelectedSchool(filteredSchoolList[nextIndex].name);
           setCurrentIndex(nextIndex);
+
           break;
         case "Enter":
           e.preventDefault();
@@ -120,7 +125,7 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
           break;
       }
 
-      if (schoolSearchBoxRef.current && currentIndex > -1) {
+      if (schoolSearchNamesRef.current[currentIndex]) {
         // console.log(schoolSearchBoxRef.current);
         schoolSearchNamesRef.current[currentIndex].scrollIntoView({
           block: "nearest",
@@ -128,7 +133,7 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
         });
       }
     },
-    [currentIndex]
+    [currentIndex, userInput]
   );
 
   return (
@@ -190,8 +195,6 @@ function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
                           value={selectedSchool}
                           key={schoolList.id}
                           onClick={onClickSchoolSelected}
-                          onKeyDown={handleKeyDown}
-                          // tabIndex={idx === currentIndex ? "0" : "-1"}
                           {...(idx === currentIndex ? {tabIndex: 0} : {})}
                         >
                           {schoolList.name}
@@ -273,6 +276,7 @@ const BasicItemsWrap = styled.div`
 
 const BasicItemsBox = styled.ul`
   padding: 0px;
+  z-index: 2;
 `;
 
 const BasicItemsName = styled.div`
@@ -336,7 +340,7 @@ const SchoolSearchWrap = styled.div`
 
 const SchoolSearchBox = styled.ul`
   overflow-y: scroll;
-  max-height: 83px;
+  max-height: 100px;
   padding: 0px;
   ::-webkit-scrollbar {
     // width: 10px; /* 스크롤바의 너비 */
