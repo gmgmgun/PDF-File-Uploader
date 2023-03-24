@@ -2,70 +2,140 @@ import React, {useEffect, useState, useCallback, useRef} from "react";
 import styled from "styled-components";
 import dropdown from "../assets/images/dropdown.png";
 
-function DropDownBox({fileIndex, setModifiedFileNameList}) {
-  const yearRef = useRef(null);
+function DropDownBox({fileIndex, setModifiedFileNameList, setIsAllSelected}) {
   const [isBtnOpen, setIsBtnOpen] = useState({});
   const [isInputOpen, setIsInputOpen] = useState({});
-
-  //✅누른 값 관리
-  const [selected, setSelected] = useState({
+  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [userInput, setUserInput] = useState("");
+  const [schoolList, setSchoolList] = useState([]);
+  const [selectedSchool, setSelectedSchool] = useState("");
+  const [selectedFilterList, setSelectedFilterList] = useState({
     0: "",
     1: BASIC_DATA[0].name,
     2: BASIC_DATA[1].name,
     3: "",
   });
 
+  const yearRef = useRef(null);
+  const schoolSearchNamesRef = useRef([]);
+
   const onClickSelected = useCallback(
     (e, idx) => {
-      setSelected({...selected, [idx + 1]: e.target.innerHTML});
+      setSelectedFilterList({
+        ...selectedFilterList,
+        [idx + 1]: e.target.innerHTML,
+      });
     },
-    [selected]
+    [selectedFilterList]
   );
 
   const onClickSchoolSelected = (e) => {
     setUserInput(e.target.innerHTML);
   };
-  const [userInput, setUserInput] = useState("");
-  const [schools, setSchools] = useState([]);
-  const [schoolSelected, setSchoolSelected] = useState("");
 
   const handleSearch = (e) => {
+    console.log(e.target.value);
     setUserInput(e.target.value);
   };
 
-  const filteredSchools = schools.filter((schools) => {
-    if (userInput) return schools.name.includes(userInput);
+  const filteredSchoolList = schoolList.filter((school) => {
+    if (userInput) return school.name.includes(userInput);
   });
 
   useEffect(() => {
     fetch("/data/school_list.json")
       .then((res) => res.json())
       .then((res) => {
-        setSchools(res);
+        setSchoolList(res);
       });
   }, []);
 
   useEffect(() => {
-    setSelected((prevSelected) => ({
+    setIsAllSelected(false);
+    if (selectedFilterList[1] === BASIC_DATA[0].name) return;
+    if (selectedFilterList[2] === BASIC_DATA[1].name) return;
+    if (selectedFilterList[3] === "") return;
+    setIsAllSelected(true);
+  }, [selectedFilterList]);
+
+  useEffect(() => {
+    setSelectedFilterList((prevSelected) => ({
       ...prevSelected,
       0: yearRef.current.innerText,
     }));
   }, [yearRef]);
 
   useEffect(() => {
-    setSelected((prevSelected) => ({
+    setSelectedFilterList((prevSelected) => ({
       ...prevSelected,
       3: userInput,
     }));
+    setIsInputOpen(true);
   }, [userInput]);
-
+  console.log(currentIndex);
   useEffect(() => {
-    const modifiedFileName = `${selected[0]}_${selected[1]}_${selected[2]}_${selected[3]}`;
+    const modifiedFileName = `${selectedFilterList[0]}_${selectedFilterList[1]}_${selectedFilterList[2]}_${selectedFilterList[3]}`;
     setModifiedFileNameList((prev) => ({
       ...prev,
       [fileIndex]: modifiedFileName,
     }));
-  }, [selected]);
+  }, [selectedFilterList]);
+
+  const schoolSearchBoxRef = useRef(null);
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (!userInput) return;
+      const index = currentIndex;
+      console.log(e.key);
+      switch (e.key) {
+        case "ArrowUp":
+          e.preventDefault();
+          const prevIndex =
+            index > 0 ? index - 1 : filteredSchoolList.length - 1;
+          setSelectedSchool(filteredSchoolList[prevIndex].name);
+          setCurrentIndex(
+            prevIndex === filteredSchoolList.length - 1 ? 0 : prevIndex
+          );
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          const nextIndex =
+            index < filteredSchoolList.length - 1 ? index + 1 : 0;
+          console.log("next = ", nextIndex);
+          console.log("list = ", filteredSchoolList.length - 1);
+          console.log("index = ", index);
+          setSelectedSchool(filteredSchoolList[nextIndex].name);
+          setCurrentIndex(nextIndex);
+
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (index > -1) {
+            setSelectedFilterList({
+              ...selectedFilterList,
+              3: filteredSchoolList[index].name,
+            });
+            setUserInput(filteredSchoolList[index].name);
+            setIsInputOpen(false);
+          }
+          break;
+        default:
+          break;
+      }
+
+      if (schoolSearchNamesRef.current[currentIndex]) {
+        // console.log(schoolSearchBoxRef.current);
+        schoolSearchNamesRef.current[currentIndex].scrollIntoView({
+          block: "nearest",
+          inline: "nearest",
+        });
+      }
+    },
+    [currentIndex, userInput]
+  );
+
   return (
     <DropDownWrap>
       <YearWrap ref={yearRef}>2023</YearWrap>
@@ -73,11 +143,12 @@ function DropDownBox({fileIndex, setModifiedFileNameList}) {
         {BASIC_DATA.map((option, idx) => {
           return (
             <OptionWrap
+              key={option.name}
               onMouseEnter={() => setIsBtnOpen({[option.name]: true})}
               onMouseLeave={() => setIsBtnOpen({[option.name]: false})}
               name={option.name}
             >
-              <p>{selected[idx + 1]}</p>
+              <p>{selectedFilterList[idx + 1]}</p>
               {isBtnOpen[option.name] && (
                 <BasicItemsWrap>
                   {option.options.map((data) => {
@@ -110,20 +181,23 @@ function DropDownBox({fileIndex, setModifiedFileNameList}) {
           onChange={handleSearch}
           placeholder="학교명"
           value={userInput}
-        ></SearchInput>
-        {filteredSchools.length > 1
-          ? isBtnOpen && (
+          onKeyDown={handleKeyDown}
+        />
+        {filteredSchoolList.length > 1
+          ? isInputOpen && (
               <SchoolSearchWrap>
-                <SchoolSearchBox>
-                  {filteredSchools.length !== schools.length &&
-                    filteredSchools.map((schools) => {
+                <SchoolSearchBox ref={schoolSearchBoxRef}>
+                  {filteredSchoolList.length !== schoolList.length &&
+                    filteredSchoolList.map((schoolList, idx) => {
                       return (
                         <SchoolSearchName
-                          value={schoolSelected}
-                          key={schools.id}
+                          ref={(el) => (schoolSearchNamesRef.current[idx] = el)}
+                          value={selectedSchool}
+                          key={schoolList.id}
                           onClick={onClickSchoolSelected}
+                          {...(idx === currentIndex ? {tabIndex: 0} : {})}
                         >
-                          {schools.name}
+                          {schoolList.name}
                         </SchoolSearchName>
                       );
                     })}
@@ -149,7 +223,7 @@ const YearWrap = styled.div`
   align-items: center;
   margin-left: 5px;
   padding: 1px 5px 0px 5px;
-  height: 27px;
+  height: 40px;
   width: 60px;
   border: 1px solid #006064;
   border-radius: 10px;
@@ -166,7 +240,7 @@ const BasicDropDownWrap = styled.div`
 const OptionWrap = styled.button`
   ${({theme}) => theme.mixin.flex("flex", "space-between", "center")};
   position: relative;
-  height: 30px;
+  height: 40px;
   margin-left: 5px;
   border: 1px solid #006064;
   border-radius: 10px;
@@ -186,7 +260,7 @@ const OptionIcon = styled.img`
 `;
 
 const BasicItemsWrap = styled.div`
-  width: 80%;
+  width: 100%;
   display: grid;
   position: absolute;
   padding: 8px;
@@ -202,6 +276,7 @@ const BasicItemsWrap = styled.div`
 
 const BasicItemsBox = styled.ul`
   padding: 0px;
+  z-index: 2;
 `;
 
 const BasicItemsName = styled.div`
@@ -223,7 +298,7 @@ const SearchWrap = styled.div`
   align-items: center;
   margin: 0px 5px;
   padding: 0px 3px;
-  height: 28px;
+  height: 40px;
   border: 1px solid #006064;
   border-radius: 10px;
   color: #006064;
@@ -232,6 +307,7 @@ const SearchWrap = styled.div`
 
 const SearchInput = styled.input`
   width: 140px;
+  height: 20px;
   padding: 3px;
   border: none;
   color: #006064;
@@ -251,7 +327,7 @@ const SchoolSearchWrap = styled.div`
   display: grid;
   position: absolute;
   padding: 8px;
-  width: 90%;
+  width: 100%;
   top: 30px;
   left: 0px;
   gap: 4px;
@@ -264,10 +340,11 @@ const SchoolSearchWrap = styled.div`
 
 const SchoolSearchBox = styled.ul`
   overflow-y: scroll;
-  max-height: 70px;
+  max-height: 100px;
   padding: 0px;
   ::-webkit-scrollbar {
-    width: 10px; /* 스크롤바의 너비 */
+    // width: 10px; /* 스크롤바의 너비 */
+    display: none;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -281,7 +358,7 @@ const SchoolSearchBox = styled.ul`
   }
 `;
 
-const SchoolSearchName = styled.div`
+const SchoolSearchName = styled.li`
   margin: 6px 0px;
   color: #006064;
   font-size: 15px;
@@ -292,6 +369,12 @@ const SchoolSearchName = styled.div`
     background-color: #006064;
     color: white;
   }
+  ${({tabIndex}) =>
+    tabIndex === 0 &&
+    `
+    background-color: #006064;
+    color: white;
+  `};
 `;
 
 const BASIC_DATA = [

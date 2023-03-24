@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import contact from "../assets/images/contact.png";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,33 +8,20 @@ const SubmitBox = ({
   onChangeInput,
   onSubmit,
   stagedFileList,
-  cancelUpload,
-  initializeState,
+  isAllSelected,
+  isAbort,
+  setIsAbort,
 }) => {
-  const [isAbort, setIsAbort] = useState(false);
-
-  const onAbort = () => {
-    cancelUpload();
-    // initializeState();
-
-    //todo: DB에 업로드된 파일 delete req
-    // const axiosConfig = {
-    //   url: `${API.deleteUploadedFiles}/${deleteCode}`,
-    //   method: 'DELETE',
-    //   headers: {
-    //     Authorization: SAMPLE_TOKEN,
-    //   },
-    // };
-    // axios(axiosConfig);
-  };
+  const onAbort = () => {};
 
   const handleBtnChange = (e) => {
     e.target.name === "submit" ? setIsAbort(true) : setIsAbort(false);
   };
-  // const onCheck = arrayFileNames.length !== 0 && contactInput.length === 11;
+
   const onCheck =
     (stagedFileList && stagedFileList.length) !== 0 &&
-    contactInput.length === 11;
+    contactInput.length === 11 &&
+    isAllSelected;
 
   return (
     <SubmitWrap>
@@ -47,7 +34,7 @@ const SubmitBox = ({
           onChange={onChangeInput}
           maxLength="11"
         ></ContactInput>
-        <ContactSample>- 빼고 입력해주세요</ContactSample>
+        <ContactSample>하이폰(-)을 빼고 입력해주세요</ContactSample>
       </Contact>
       {!isAbort ? (
         <SubmitButton
@@ -80,7 +67,7 @@ const SubmitBox = ({
 const SubmitWrap = styled.div`
   ${({theme}) => theme.mixin.flex("flex", "space-between", "center")};
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   min-width: 300px;
   padding-bottom: 10px;
   border-bottom: 1px solid #c4c4c4;
@@ -92,7 +79,7 @@ const SubmitWrap = styled.div`
 
 const Contact = styled.div`
   ${({theme}) => theme.mixin.flex("flex", "space-flex-start", "center")};
-  width: 80%;
+  width: 100%;
   position: relative;
   @media (max-width: 650px) {
     margin-bottom: 10px;
@@ -103,7 +90,7 @@ const Contact = styled.div`
 `;
 const ContactIcon = styled.img`
   padding: 0px 10px 5px 15px;
-  width: 30px;
+  width: 40px;
   @media (max-width: 650px) {
     width: 20px;
   }

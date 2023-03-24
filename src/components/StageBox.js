@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import pdf from "../assets/images/pdf.png";
@@ -16,6 +16,7 @@ const StageBox = ({
   handleProgressRef,
   onReset,
   setModifiedFileNameList,
+  setIsAllSelected,
 }) => {
   const hasFiles = stagedFileList ? stagedFileList.length : 0;
   const getByteSize = (size) => {
@@ -24,18 +25,22 @@ const StageBox = ({
     for (let i = 0; i < byteUnits.length; i++) {
       size = size / 1024;
 
-      if (size < 1024) return size.toFixed(2) + byteUnits[i];
+      if (size < 1024) return size.toFixed(0) + byteUnits[i];
     }
   };
+
+  const handleDeleteBtn = (idx, file) => {
+    fileRemove(file);
+  };
+
   const fileRemove = (targetFile) => {
     const tempFileList = stagedFileList.filter((file) => file !== targetFile);
     setStagedFileList(tempFileList);
   };
+
   return (
     <StageWrap>
-      {hasFiles === 0 ? (
-        <p>비어있음</p>
-      ) : (
+      {hasFiles === 0 ? null : (
         <>
           <TotalProgressBarWrap>
             <TotalProgressBar
@@ -54,7 +59,9 @@ const StageBox = ({
                       <StagedFileName>{file.name}</StagedFileName>
                       <StagedFileSize>{getByteSize(file.size)}</StagedFileSize>
                     </StagedFileInfoText>
-                    <DeleteStagedFileBtn onClick={() => fileRemove(file)}>
+                    <DeleteStagedFileBtn
+                      onClick={() => handleDeleteBtn(idx, file)}
+                    >
                       X
                     </DeleteStagedFileBtn>
                   </StagedFileInfo>
@@ -70,6 +77,7 @@ const StageBox = ({
                 <DropDownBox
                   fileIndex={idx}
                   setModifiedFileNameList={setModifiedFileNameList}
+                  setIsAllSelected={setIsAllSelected}
                 />
               </FileWrap>
             );
@@ -105,13 +113,12 @@ const TotalProgressBar = styled(ProgressBar).attrs((props) => ({
   }
 `;
 
-const FileWrap = styled.li`
+const FileWrap = styled.div`
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr; /* 새로운 열 추가 */
+  grid-template-columns: 1fr 5fr 1fr; /* 새로운 열 추가 */
   // grid-template-columns: 1fr 9fr;
-  padding: 10px 0px;
-  font-weight: 750;
+  padding: 15px 0px;
   border-bottom: 1px solid #dcdcdc;
   @media (max-width: 400px) {
     padding: 5px 0px;
@@ -120,21 +127,39 @@ const FileWrap = styled.li`
 
 const StagedFileInfoWrap = styled.div`
   display: grid;
-  grid-template-rows: 1fr 1fr; /* 새로운 열 추가 */
+  grid-template-rows: 1fr 1fr;
 `;
 
 const PngIcon = styled.img`
-  width: 55px;
-  height: 50px;
-  padding-left: 9px;
+  width: 100%;
+  height: 100%;
   @media (max-width: 650px) {
-    margin-right: 19px;
-    width: 27px;
+    width: 30px;
     height: 30px;
   }
 `;
 
-const UploadProgressBarWrap = styled.div``;
+const StagedFileInfoText = styled.div``;
+
+const StagedFileInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StagedFileName = styled.div`
+  font-size: 15px;
+  font-weight: 750;
+`;
+
+const StagedFileSize = styled.div`
+  padding-top: 2px;
+  font-size: 12px;
+  font-weight: 750;
+`;
+
+const UploadProgressBarWrap = styled.div`
+  padding-top: 5px;
+`;
 
 const UploadProgressBar = styled(ProgressBar).attrs((props) => ({
   min: 0,
@@ -149,17 +174,6 @@ const UploadProgressBar = styled(ProgressBar).attrs((props) => ({
     font-size: 17px;
     font-weight: 1000;
   }
-`;
-
-const StagedFileInfoText = styled.div``;
-
-const StagedFileName = styled.div``;
-
-const StagedFileSize = styled.div``;
-
-const StagedFileInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 const DeleteStagedFileBtn = styled.button`

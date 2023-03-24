@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.0.89:3001";
+const BASE_URL = "http://127.0.0.1:3001";
 
 export const API = {
   postFileList: `${BASE_URL}/files/dragndrop`,
