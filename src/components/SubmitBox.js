@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React from "react";
-=======
-import React, {useState} from "react";
->>>>>>> 2380bea (Initialize: 초기 세팅)
 import styled from "styled-components";
 import contact from "../assets/images/contact.png";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,50 +8,20 @@ const SubmitBox = ({
   onChangeInput,
   onSubmit,
   stagedFileList,
-<<<<<<< HEAD
   isAllSelected,
   isAbort,
   setIsAbort,
-  onAbort,
 }) => {
   const onAbort = () => {};
-=======
-  cancelUpload,
-  initializeState,
-}) => {
-  const [isAbort, setIsAbort] = useState(false);
-
-  const onAbort = () => {
-    cancelUpload();
-    // initializeState();
-
-    //todo: DB에 업로드된 파일 delete req
-    // const axiosConfig = {
-    //   url: `${API.deleteUploadedFiles}/${deleteCode}`,
-    //   method: 'DELETE',
-    //   headers: {
-    //     Authorization: SAMPLE_TOKEN,
-    //   },
-    // };
-    // axios(axiosConfig);
-  };
->>>>>>> 2380bea (Initialize: 초기 세팅)
 
   const handleBtnChange = (e) => {
     e.target.name === "submit" ? setIsAbort(true) : setIsAbort(false);
   };
-<<<<<<< HEAD
 
   const onCheck =
     (stagedFileList && stagedFileList.length) !== 0 &&
     contactInput.length === 11 &&
     isAllSelected;
-=======
-  // const onCheck = arrayFileNames.length !== 0 && contactInput.length === 11;
-  const onCheck =
-    (stagedFileList && stagedFileList.length) !== 0 &&
-    contactInput.length === 11;
->>>>>>> 2380bea (Initialize: 초기 세팅)
 
   return (
     <SubmitWrap>
@@ -68,11 +34,7 @@ const SubmitBox = ({
           onChange={onChangeInput}
           maxLength="11"
         ></ContactInput>
-<<<<<<< HEAD
         <ContactSample>하이폰(-)을 빼고 입력해주세요</ContactSample>
-=======
-        <ContactSample>- 빼고 입력해주세요</ContactSample>
->>>>>>> 2380bea (Initialize: 초기 세팅)
       </Contact>
       {!isAbort ? (
         <SubmitButton
@@ -105,11 +67,7 @@ const SubmitBox = ({
 const SubmitWrap = styled.div`
   ${({theme}) => theme.mixin.flex("flex", "space-between", "center")};
   width: 100%;
-<<<<<<< HEAD
   max-width: 700px;
-=======
-  max-width: 600px;
->>>>>>> 2380bea (Initialize: 초기 세팅)
   min-width: 300px;
   padding-bottom: 10px;
   border-bottom: 1px solid #c4c4c4;
@@ -121,11 +79,7 @@ const SubmitWrap = styled.div`
 
 const Contact = styled.div`
   ${({theme}) => theme.mixin.flex("flex", "space-flex-start", "center")};
-<<<<<<< HEAD
   width: 100%;
-=======
-  width: 80%;
->>>>>>> 2380bea (Initialize: 초기 세팅)
   position: relative;
   @media (max-width: 650px) {
     margin-bottom: 10px;
@@ -136,11 +90,7 @@ const Contact = styled.div`
 `;
 const ContactIcon = styled.img`
   padding: 0px 10px 5px 15px;
-<<<<<<< HEAD
   width: 40px;
-=======
-  width: 30px;
->>>>>>> 2380bea (Initialize: 초기 세팅)
   @media (max-width: 650px) {
     width: 20px;
   }

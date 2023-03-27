@@ -8,10 +8,6 @@ import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {API, SAMPLE_TOKEN} from "../config";
 import axios from "axios";
-<<<<<<< HEAD
-=======
-import {v4} from "uuid";
->>>>>>> 2380bea (Initialize: 초기 세팅)
 
 const Main = () => {
   const [contactInput, setContactInput] = useState("010", "");
@@ -20,31 +16,16 @@ const Main = () => {
   const [progressList, setProgressList] = useState([]);
   const [totalProgress, setTotalProgress] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
-<<<<<<< HEAD
+
   const [modifiedFileNameList, setModifiedFileNameList] = useState({});
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isAbort, setIsAbort] = useState(false);
-<<<<<<< HEAD
-=======
-  const [axiosCancelToken, setAxiosCancelToken] = useState();
-  const [deleteCode, setDeleteCode] = useState(0);
-  const [modifiedFileNameList, setModifiedFileNameList] = useState({});
-  const cancelUpload = () => {
-    axiosCancelToken.cancel("Upload cancelled by user.");
-  };
-
-  const handleStagedFileList = (sth) => {
-    setStagedFileList(sth);
-  };
->>>>>>> 2380bea (Initialize: 초기 세팅)
-=======
   // const [cancelToken, setCancelToken] = useState(() =>
   //   axios.CancelToken.source()
   // );
   const CancelToken = axios.CancelToken;
   const source = CancelToken.source();
   const cancelRef = useRef(source);
->>>>>>> 69d6537 (Modify: 중단 기능 수정)
 
   const sendFormData = async () => {
     let fileUploadedCount = 0;
@@ -55,16 +36,7 @@ const Main = () => {
       const formData = new FormData();
       formData.append("contact", contactInput);
       formData.append("date", moment().format("YYYY-MM-DD-ddd h:mm:ss a"));
-<<<<<<< HEAD
       formData.append("file", file, `${modifiedFileName}.pdf`);
-=======
-      const deleteCode = v4();
-      setDeleteCode(deleteCode);
-      const source = axios.CancelToken.source();
-      formData.append("file", file, `${modifiedFileName}.pdf`);
-      formData.append("deleteCode", deleteCode);
-
->>>>>>> 2380bea (Initialize: 초기 세팅)
       const axiosConfig = {
         url: `${API.postFileList}`,
         method: "POST",
@@ -73,16 +45,9 @@ const Main = () => {
           Authorization: SAMPLE_TOKEN,
         },
         data: formData,
-<<<<<<< HEAD
         maxContentLength: 10000000,
         maxBodyLength: 10000000,
         onUploadProgress: (progressEvent) => {
-=======
-        maxContentLength: 10000000, // 엑시오스 용량 늘리기
-        maxBodyLength: 10000000, // 엑시오스 용량 늘리기
-        onUploadProgress: (progressEvent) => {
-          setAxiosCancelToken(source);
->>>>>>> 2380bea (Initialize: 초기 세팅)
           setTotalProgress((prev) => prev + progressEvent.bytes);
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
@@ -93,29 +58,12 @@ const Main = () => {
             return newList;
           });
         },
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
         cancelToken: source.token,
->>>>>>> 2380bea (Initialize: 초기 세팅)
-=======
-        cancelToken: cancelRef.current.token,
->>>>>>> 69d6537 (Modify: 중단 기능 수정)
       };
       try {
         await axios(axiosConfig);
       } catch (error) {
-<<<<<<< HEAD
-<<<<<<< HEAD
         console.log(error);
-=======
-        if (axios.isCancel(error)) {
-          return;
-        } else {
-          console.log(error);
-        }
->>>>>>> 2380bea (Initialize: 초기 세팅)
-=======
         onReset(error);
         if (axios.isCancel(error)) {
           // 중지 요청에 의한 에러인지 확인
@@ -127,7 +75,6 @@ const Main = () => {
           onReset();
           return;
         }
->>>>>>> 69d6537 (Modify: 중단 기능 수정)
       }
       fileUploadedCount++;
     }
@@ -145,15 +92,8 @@ const Main = () => {
     setTotalSize(0);
   };
 
-<<<<<<< HEAD
   const onReset = () => {
-<<<<<<< HEAD
-=======
-  const onReset = (err) => {
->>>>>>> 69d6537 (Modify: 중단 기능 수정)
     setIsAbort(false);
-=======
->>>>>>> 2380bea (Initialize: 초기 세팅)
     setSelectedFile([]) && setContactInput("010", "");
     setStagedFileList([]);
     setTotalProgress(0);
@@ -186,20 +126,12 @@ const Main = () => {
   };
 
   return (
-<<<<<<< HEAD
     <MainWrap>
-=======
-    <Wrap>
->>>>>>> 2380bea (Initialize: 초기 세팅)
       <ToastContainer
         position="top-center"
         limit={2}
         closeButton={false}
         autoClose={800}
-<<<<<<< HEAD
-=======
-        hideProgressBar
->>>>>>> 2380bea (Initialize: 초기 세팅)
       />
       <UploadBox
         selectedFile={selectedFile}
@@ -214,10 +146,6 @@ const Main = () => {
         setTotalSize={setTotalSize}
         initializeState={initializeState}
         handleProgressRef={handleProgressRef}
-<<<<<<< HEAD
-=======
-        handleStagedFileList={handleStagedFileList}
->>>>>>> 2380bea (Initialize: 초기 세팅)
       />
       {stagedFileList && (
         <StageBox
@@ -233,10 +161,7 @@ const Main = () => {
           setTotalSize={setTotalSize}
           initializeState={initializeState}
           setModifiedFileNameList={setModifiedFileNameList}
-<<<<<<< HEAD
           setIsAllSelected={setIsAllSelected}
-=======
->>>>>>> 2380bea (Initialize: 초기 세팅)
         />
       )}
       <SubmitBox
@@ -247,7 +172,6 @@ const Main = () => {
         setProgressList={setProgressList}
         setTotalProgress={setTotalProgress}
         setTotalSize={setTotalSize}
-<<<<<<< HEAD
         isAllSelected={isAllSelected}
         isAbort={isAbort}
         setIsAbort={setIsAbort}
@@ -258,15 +182,6 @@ const Main = () => {
 };
 
 const MainWrap = styled.div`
-=======
-        cancelUpload={cancelUpload}
-      />
-    </Wrap>
-  );
-};
-
-const Wrap = styled.div`
->>>>>>> 2380bea (Initialize: 초기 세팅)
   display: flex;
   flex-direction: column;
   align-items: center;
